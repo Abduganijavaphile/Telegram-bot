@@ -2,6 +2,16 @@ package dev.abu.my_bot;
 
 public interface BotConstant {
     String IQ_START = "IQ_START";
+    String ING_START = "ING_START";
+    String ING_START2 = "ING_START2";
+    String ING_START3 = "ING_START3";
+    String ING_START4 = "ING_START4";
+    String ING_START5 = "ING_START5";
+    String ING_START6 = "ING_START6";
+    String ING_START7 = "ING_START7";
+    String ING_START8 = "ING_START8";
+    String ING_START9 = "ING_START9";
+    String ING_START10 = "ING_START10";
     String IQ_START2 = "IQ_START2";
     String IQ_START3 = "IQ_START3";
     String IQ_START4 = "IQ_START4";
@@ -12,9 +22,13 @@ public interface BotConstant {
     String IQ_START9 = "IQ_START9";
     String IQ_START10 = "IQ_START10";
     String IQ_LAST = "IQ_LAST";
+    String ING_LAST = "ING_LAST";
+    String DAS_LAST = "DAS_LAST";
     String SELECT_LANG = "SELECT_LANG";
+    String SELECT_FAN = "SELECT_FAN";
     String WRITE_MSG = "WRITE_MSG";
     String ENTER_NAME = "ENTER_NAME";
+    String ENTER_FAN = "ENTER_FAN";
     String STARTED_TEST = "STARTED_TEST";
     String STARTED_TEST1 = "STARTED_TEST1";
     String DAS_START = "DAS_START";

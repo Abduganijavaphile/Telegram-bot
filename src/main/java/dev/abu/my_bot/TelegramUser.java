@@ -5,6 +5,7 @@ public class TelegramUser {
     private String step;
     private String msg;
     private String fullName;
+    private String firstName;
     private String selectedLang;
     private String startTest;
 
@@ -14,6 +15,14 @@ public class TelegramUser {
 
     public void setStartTest(String startTest) {
         this.startTest = startTest;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getSelectedLang() {
@@ -63,6 +72,9 @@ public class TelegramUser {
                 ", step='" + step + '\'' +
                 ", msg='" + msg + '\'' +
                 ", fullName='" + fullName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", selectedLang='" + selectedLang + '\'' +
+                ", startTest='" + startTest + '\'' +
                 '}';
     }
 }

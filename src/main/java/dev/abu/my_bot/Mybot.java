@@ -1,6 +1,5 @@
 package dev.abu.my_bot;
 
-
 import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.GetFile;
@@ -10,6 +9,8 @@ import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.InputStream;
@@ -27,6 +28,7 @@ public class Mybot extends TelegramLongPollingBot {
             Message message = update.getMessage();
             String chatId = message.getChatId().toString();
             TelegramUser user = saveUser(chatId);
+            Contact contact = message.getContact();
             if (message.hasText()) {
                 String text = message.getText();
                 if (text.equals("/list")) {
@@ -34,16 +36,24 @@ public class Mybot extends TelegramLongPollingBot {
                 }
                 if (text.equals("/start")) {
                     if (user.getFullName()!=null){
-                        try {
-                            setLang(chatId,user);
-                        } catch (TelegramApiException e) {
-                            throw new RuntimeException(e);
-                        }
+
                     }else{
                         SendMessage sendMessage = new SendMessage();
-                        sendMessage.setText("Assalomu alaykum! \n Botga xush kelibsiz\n" +
-                                "✍\uFE0F, ❗\uFE0F Iltimos Ism va Familiyangizni kiriting:\n" );
-                        sendMessage.setChatId(chatId);
+                        sendMessage.setText("Assalomu alaykum! \n Botga xush kelibsiz");
+                        sendMessage.setParseMode(ParseMode.MARKDOWN);
+                        sendMessage.setChatId(message.getChatId());
+
+                        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                        replyKeyboardMarkup.setResizeKeyboard(true);
+                        List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                        KeyboardRow keyboardRow1 = new KeyboardRow();
+                        KeyboardButton keyboardButton1 = new KeyboardButton();
+                        keyboardButton1.setText("Share contact \uD83D\uDD04");
+                        keyboardButton1.setRequestContact(true);
+                        keyboardRow1.add(keyboardButton1);
+                        keyboardRowList.add(keyboardRow1);
+                        replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                        sendMessage.setReplyMarkup(replyKeyboardMarkup);
                         try {
                             execute(sendMessage);
                         } catch (TelegramApiException e) {
@@ -52,15 +62,191 @@ public class Mybot extends TelegramLongPollingBot {
                         user.setStep(BotConstant.ENTER_NAME);
                     }
                 } else if (user.getStep().equals(BotConstant.ENTER_NAME)) {
+
+                }if (text != null && text.equals("/startni")) {
+                    SendMessage sendMessage1 = new SendMessage();
+                    sendMessage1.setText("Iltimos tilni tanlang :");
+                    sendMessage1.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage1.setChatId(message.getChatId());
+
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                    KeyboardRow keyboardRow1 = new KeyboardRow();
+                    KeyboardButton keyboardButton1 = new KeyboardButton();
+                    keyboardButton1.setText("Uz \uD83C\uDDFA\uD83C\uDDFF");
+                    KeyboardButton keyboardButton2 = new KeyboardButton();
+                    keyboardButton2.setText("Ru \uD83C\uDDF7\uD83C\uDDFA");
+                    KeyboardButton keyboardButton3 = new KeyboardButton();
+                    keyboardButton3.setText("Eng \uD83C\uDDFA\uD83C\uDDF8");
+                    keyboardRow1.add(keyboardButton1);
+                    keyboardRow1.add(keyboardButton2);
+                    keyboardRow1.add(keyboardButton3);
+                    keyboardRowList.add(keyboardRow1);
+                    replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                    sendMessage1.setReplyMarkup(replyKeyboardMarkup);
                     try {
-                        user.setFullName(text);
-                        setLang(chatId,user);
+                        execute(sendMessage1);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    user.setStep(BotConstant.SELECT_FAN);
+                } else if (text.equals("Uz \uD83C\uDDFA\uD83C\uDDFF")) {
+                    SendMessage sendMessage1 = new SendMessage();
+                    sendMessage1.setText("Test ishlashga tayyormisiz ❓");
+                    sendMessage1.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage1.setChatId(message.getChatId());
+
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                    KeyboardRow keyboardRow1 = new KeyboardRow();
+                    KeyboardButton keyboardButton1 = new KeyboardButton();
+                    keyboardButton1.setText("Ha tayyorman \uD83E\uDDE0");
+                    KeyboardButton keyboardButton2 = new KeyboardButton();
+                    keyboardButton2.setText("Yo'q  \uD83D\uDE34");
+                    keyboardRow1.add(keyboardButton1);
+                    keyboardRow1.add(keyboardButton2);
+                    keyboardRowList.add(keyboardRow1);
+                    replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                    sendMessage1.setReplyMarkup(replyKeyboardMarkup);
+                    try {
+                        execute(sendMessage1);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    user.setStep(BotConstant.SELECT_LANG);
+
+                } else if (text.equals("Ru \uD83C\uDDF7\uD83C\uDDFA")) {
+                    SendMessage sendMessage1 = new SendMessage();
+                    sendMessage1.setText("Готовы ли вы пройти тест ❓");
+                    sendMessage1.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage1.setChatId(message.getChatId());
+
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                    KeyboardRow keyboardRow1 = new KeyboardRow();
+                    KeyboardButton keyboardButton1 = new KeyboardButton();
+                    keyboardButton1.setText("Да я готов \uD83D\uDE07");
+                    KeyboardButton keyboardButton2 = new KeyboardButton();
+                    keyboardButton2.setText("Нет \uD83D\uDE07");
+                    keyboardRow1.add(keyboardButton1);
+                    keyboardRow1.add(keyboardButton2);
+                    keyboardRowList.add(keyboardRow1);
+                    replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                    sendMessage1.setReplyMarkup(replyKeyboardMarkup);
+                    try {
+                        execute(sendMessage1);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    user.setStep(BotConstant.SELECT_LANG);
+                }else if (text.equals("Eng \uD83C\uDDFA\uD83C\uDDF8")) {
+                    SendMessage sendMessage1 = new SendMessage();
+                    sendMessage1.setText("Are you ready to take the Test ❓");
+                    sendMessage1.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage1.setChatId(message.getChatId());
+
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                    KeyboardRow keyboardRow1 = new KeyboardRow();
+                    KeyboardButton keyboardButton1 = new KeyboardButton();
+                    keyboardButton1.setText("Yes ! I am ready \uD83D\uDE07");
+                    KeyboardButton keyboardButton2 = new KeyboardButton();
+                    keyboardButton2.setText("No \uD83D\uDE07");
+                    keyboardRow1.add(keyboardButton1);
+                    keyboardRow1.add(keyboardButton2);
+                    keyboardRowList.add(keyboardRow1);
+                    replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                    sendMessage1.setReplyMarkup(replyKeyboardMarkup);
+                    try {
+                        execute(sendMessage1);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    user.setStep(BotConstant.SELECT_LANG);
+                } else if (text.equals("Yes ! I am ready \uD83D\uDE07")|| text.equals("Да я готов \uD83D\uDE07") || text.equals("Ha tayyorman \uD83E\uDDE0")) {
+                    SendMessage sendMessage1 = new SendMessage();
+                    sendMessage1.setText("Fanlardan birini tanlang: ");
+                    sendMessage1.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage1.setChatId(message.getChatId());
+
+                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+                    replyKeyboardMarkup.setResizeKeyboard(true);
+                    List<KeyboardRow> keyboardRowList = new ArrayList<>();
+                    KeyboardRow keyboardRow1 = new KeyboardRow();
+                    KeyboardRow keyboardRow2 = new KeyboardRow();
+                    KeyboardRow keyboardRow3 = new KeyboardRow();
+                    KeyboardButton keyboardButton1 = new KeyboardButton();
+                    keyboardButton1.setText("Dasturlash \uD83D\uDC68\uD83C\uDFFC\u200D\uD83D\uDCBB");
+                    KeyboardButton keyboardButton2 = new KeyboardButton();
+                    keyboardButton2.setText("Ingliz tili \uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F");
+                    KeyboardButton keyboardButton3 = new KeyboardButton();
+                    keyboardButton3.setText("IQ Test \uD83E\uDDE0");
+                    keyboardRow1.add(keyboardButton1);
+                    keyboardRow2.add(keyboardButton2);
+                    keyboardRow3.add(keyboardButton3);
+                    keyboardRowList.add(keyboardRow1);
+                    keyboardRowList.add(keyboardRow2);
+                    keyboardRowList.add(keyboardRow3);
+                    replyKeyboardMarkup.setKeyboard(keyboardRowList);
+                    sendMessage1.setReplyMarkup(replyKeyboardMarkup);
+                    try {
+                        execute(sendMessage1);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                    user.setStep(BotConstant.SELECT_FAN);
+                } else if (text.equals("Yo'q  \uD83D\uDE34")||text.equals("No \uD83D\uDE07")||text.equals("Нет \uD83D\uDE07")) {
+                    SendMessage sendMessage2 = new SendMessage();
+                    Contact contact1 = message.getContact();
+                    sendMessage2.setText("Botni qaytadan ishga tushirish uchun /start ni bosing!!!");
+                    sendMessage2.setParseMode(ParseMode.MARKDOWN);
+                    sendMessage2.setChatId(message.getChatId());
+                    try {
+                        execute(sendMessage2);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (text.equals("Dasturlash \uD83D\uDC68\uD83C\uDFFC\u200D\uD83D\uDCBB")) {
+                    try {
+                        dasturTestUz1(chatId,user);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else if (text.equals("IQ Test \uD83E\uDDE0")) {
+                    try {
+                        boshlaTestUz(chatId,user);
+                    } catch (TelegramApiException e) {
+                        throw new RuntimeException(e);
+                    }
+                }else if (text.equals("Ingliz tili \uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F")) {
+                    try {
+                        englishTestUz(chatId,user);
                     } catch (TelegramApiException e) {
                         throw new RuntimeException(e);
                     }
                 }
-            }
-        } else if (update.hasCallbackQuery()) {
+            } else if (message.hasContact()) {
+                String text = message.getText();
+                Contact contact1 = message.getContact();
+                SendMessage sendMessage = new SendMessage();
+                sendMessage.setText(contact1.getFirstName()+" tayyormisiz ?" +
+                        "\n Botdan foydalanish uchun /startni bosing");
+                sendMessage.setChatId(message.getChatId());
+                sendMessage.setParseMode(ParseMode.MARKDOWN);
+                System.out.println(contact1.getFirstName());
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.SELECT_FAN);
+            } 
+        }
+        else if (update.hasCallbackQuery()) {
             Message message = update.getCallbackQuery().getMessage();
             String chatId = message.getChatId().toString();
             String text = message.getText();
@@ -69,25 +255,11 @@ public class Mybot extends TelegramLongPollingBot {
             String data = callbackQuery.getData();
             if (user.getStep().equals(BotConstant.SELECT_LANG)){
                 if (data.equals(BotQuery.UZ_SELECT)){
-                    try {
-                        startTestUz(chatId, user);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
                     user.setStep(BotConstant.SELECT_LANG);
                 } else if (data.equals(BotQuery.RU_SELECT)){
-                    try {
-                        startTestRu(chatId, user);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
                     user.setStep(BotConstant.SELECT_LANG);
                 } else if (data.equals(BotQuery.ENG_SELECT)){
-                    try {
-                        startTestEng(chatId, user);
-                    } catch (TelegramApiException e) {
-                        throw new RuntimeException(e);
-                    }
+
                     user.setStep(BotConstant.SELECT_LANG);
                 }else if (data.equals(BotQuery.START_TEST)) {
                     try {
@@ -302,7 +474,7 @@ public class Mybot extends TelegramLongPollingBot {
                 user.setStep(BotConstant.DAS_START);
             } else if (data.equals(BotQuery.DAS_START2)) {
                 SendMessage sendMessage = new SendMessage();
-                sendMessage.setText("Botni qaytadan ishga tushirish uchun startni bos ");
+                sendMessage.setText("Botni qaytadan ishga tushirish uchun /startni bos ");
                 sendMessage.setChatId(chatId);
                 user.setStep(BotConstant.DAS_START);
             }else if (data.equals(BotQuery.TEST_DASTUR1T)) {
@@ -465,14 +637,632 @@ public class Mybot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
                 user.setStep(BotConstant.DASTUR_START10);
+            } else if (data.equals(BotQuery.ING_START1)) {
+                sum++;
+                try {
+                    englishTestUz2(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START);
+            } else if (data.equals(BotQuery.ING_START)) {
+                sum += 0;
+                try {
+                    englishTestUz2(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START);
+            }else if (data.equals(BotQuery.ING_START2T)) {
+                sum++;
+                try {
+                    englishTestUz3(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START2);
+            } else if (data.equals(BotQuery.ING_START2)) {
+                sum += 0;
+                try {
+                    englishTestUz3(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START2);
+            }else if (data.equals(BotQuery.ING_START3T)) {
+                sum++;
+                try {
+                    englishTestUz4(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START3);
+            } else if (data.equals(BotQuery.ING_START3)) {
+                sum += 0;
+                try {
+                    englishTestUz4(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START3);
+            }else if (data.equals(BotQuery.ING_START4T)) {
+                sum++;
+                try {
+                    englishTestUz5(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START4);
+            } else if (data.equals(BotQuery.ING_START4)) {
+                sum += 0;
+                try {
+                    englishTestUz5(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START4);
+            }else if (data.equals(BotQuery.ING_START5T)) {
+                sum++;
+                try {
+                    englishTestUz6(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START5);
+            } else if (data.equals(BotQuery.ING_START5)) {
+                sum += 0;
+                try {
+                    englishTestUz6(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START5);
+            }else if (data.equals(BotQuery.ING_START6T)) {
+                sum++;
+                try {
+                    englishTestUz7(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START6);
+            } else if (data.equals(BotQuery.ING_START6)) {
+                sum += 0;
+                try {
+                    englishTestUz7(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START6);
+            }else if (data.equals(BotQuery.ING_START7T)) {
+                sum++;
+                try {
+                    englishTestUz8(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START7);
+            } else if (data.equals(BotQuery.ING_START7)) {
+                sum += 0;
+                try {
+                    englishTestUz8(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START7);
+            }else if (data.equals(BotQuery.ING_START8T)) {
+                sum++;
+                try {
+                    englishTestUz9(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START8);
+            } else if (data.equals(BotQuery.ING_START8)) {
+                sum += 0;
+                try {
+                    englishTestUz9(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START8);
+            }else if (data.equals(BotQuery.ING_START9T)) {
+                sum++;
+                try {
+                    englishTestUz10(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START9);
+            } else if (data.equals(BotQuery.ING_START9)) {
+                sum += 0;
+                try {
+                    englishTestUz10(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START9);
+            }else if (data.equals(BotQuery.ING_START10T)) {
+                sum++;
+                try {
+                    last3(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START10);
+            } else if (data.equals(BotQuery.ING_START10)) {
+                sum += 0;
+                try {
+                    last3(chatId, user);
+                } catch (TelegramApiException e) {
+                    throw new RuntimeException(e);
+                }
+                user.setStep(BotConstant.ING_START10);
             }
         }
+    }
+    private void last3(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        if (sum>8 && sum<=10){
+            sendMessage.setText("Tabriklaymiz sizning ingliz tili darajangiz Advance C1 \uD83D\uDC4F \n"+
+                    "Siz topgan to'g'ri javoblar soni : " +  sum +
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
+            sendMessage.setChatId(chatId);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (sum<=8 && sum>6) {
+            sendMessage.setText("Sizning ingliz tili darajangiz Intermediate B2 \uD83D\uDC4D \n"+
+                    "Siz topgan to'g'ri javoblar soni : " +  sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
+            sendMessage.setChatId(chatId);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }else if (sum<=6 && sum>4){
+            sendMessage.setText("Sizning ingliz tili darajangiz Pre Intermediate B1 \uD83E\uDD28 \n" +
+                    "Siz ingliz tilini o'rganishingiz zarur \uD83D\uDE09 \n"+
+                    "Siz topgan to'g'ri javoblar soni : " + sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
+            sendMessage.setChatId(chatId);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }else if (sum<=4 && sum>0){
+            sendMessage.setText("Sizning ingliz tili darajangiz Elementary A1 or A2 \uD83E\uDD28 \n" +
+                    "Siz ingliz tilini o'rganishingiz zarur \uD83D\uDE09 \n"+
+                    "Siz topgan to'g'ri javoblar soni : " + sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
+            sendMessage.setChatId(chatId);
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        user.setStep(BotConstant.ING_LAST);
+    }
+    private void englishTestUz10(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("If something is ........., then it is able to catch on fire. ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("underesitmate ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START10);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("fire ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START10);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("backstage ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START10);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("flammable ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START10T);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START10);
+    }
+    private void englishTestUz9(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("to invite someone to compete or fight ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("referee ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START9);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("challenge ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START9T);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("interst ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START9);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("club ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START9);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START9);
+    }
+    private void englishTestUz8(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("To ....... an amount of something means to use up all of it ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("deplete ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START8T);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("commerse ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START8);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("goods ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START8);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("mock ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START8);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START8);
+    }
+    private void englishTestUz7(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("iltimos qilmoq ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("scrape ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START7);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("bind ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START7);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("negative ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START7);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("plead ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START7T);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START7);
+    }
+    private void englishTestUz6(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("A ............ is permission from a doctor to get medicine ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("patient ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START6);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("intake ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START6);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("prescription ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START6T);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("oppress ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START6);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START6);
+    }
+    private void englishTestUz5(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("The moon and stars were ....... in the night sky. ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("visible ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START5T);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("result ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START5);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("viewless ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START5);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("field ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START5);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START5);
+    }
+    private void englishTestUz4(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("It happened ... seven o'clock ... the evening ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("In/at ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START4);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("At/in  ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START4T);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("At/last ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START4);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("When/- ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START4);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START4);
+    }
+    private void englishTestUz3(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("James and John saved and saved, and finally they ... buy the house of their dreams ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("Managed to ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START3T);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("Could  ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START3);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("Can ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START3);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("Couldn't ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START3);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START3);
+    }
+    private void englishTestUz2(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("I took my car to the garage ... this morning ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("When ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START2);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("-  ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START2T);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("At ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START2);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText("In ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START2);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START2);
+    }
+    private void englishTestUz(String chatId, TelegramUser user) throws TelegramApiException{
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setText("I had an accident ... last night ❓");
+        sendMessage.setChatId(chatId);
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<InlineKeyboardButton> tdm1 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm2 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm3 = new ArrayList<>();
+        List<InlineKeyboardButton> tdm4 = new ArrayList<>();
+
+        InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
+        inlineKeyboardButton1.setText("In ");
+        inlineKeyboardButton1.setCallbackData(BotQuery.ING_START);
+
+        InlineKeyboardButton inlineKeyboardButton2 = new InlineKeyboardButton();
+        inlineKeyboardButton2.setText("On  ");
+        inlineKeyboardButton2.setCallbackData(BotQuery.ING_START);
+
+        InlineKeyboardButton inlineKeyboardButton3 = new InlineKeyboardButton();
+        inlineKeyboardButton3.setText("At ");
+        inlineKeyboardButton3.setCallbackData(BotQuery.ING_START);
+
+        InlineKeyboardButton inlineKeyboardButton4 = new InlineKeyboardButton();
+        inlineKeyboardButton4.setText(" - ");
+        inlineKeyboardButton4.setCallbackData(BotQuery.ING_START1);
+
+        tdm1.add(inlineKeyboardButton1);
+        tdm2.add(inlineKeyboardButton2);
+        tdm3.add(inlineKeyboardButton3);
+        tdm4.add(inlineKeyboardButton4);
+        List<List<InlineKeyboardButton>> trm  = new ArrayList<>();
+        trm.add(tdm1);
+        trm.add(tdm2);
+        trm.add(tdm3);
+        trm.add(tdm4);
+
+        inlineKeyboardMarkup.setKeyboard(trm);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        execute(sendMessage);
+        user.setStep(BotConstant.ING_START);
     }
     private void last2(String chatId, TelegramUser user) throws TelegramApiException{
         SendMessage sendMessage = new SendMessage();
         if (sum>8 && sum<=10){
             sendMessage.setText("Tabriklaymiz sizning dasturlashdagi darajangiz yuqori \uD83D\uDC4F \n"+
-                    "Siz topgan to'g'ri javoblar soni : " +  sum );
+                    "Siz topgan to'g'ri javoblar soni : " +  sum +
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -481,7 +1271,8 @@ public class Mybot extends TelegramLongPollingBot {
             }
         } else if (sum<=8 && sum>5) {
             sendMessage.setText("Sizning dasturlashdagi darajangiz o'rta darajada \uD83D\uDC4D \n"+
-                    "Siz topgan to'g'ri javoblar soni : " +  sum);
+                    "Siz topgan to'g'ri javoblar soni : " +  sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -491,7 +1282,8 @@ public class Mybot extends TelegramLongPollingBot {
         }else if (sum<=5 && sum>0){
             sendMessage.setText("Sizning darajangiz past darajada \uD83E\uDD28 \n" +
                     "Siz dasturlashni o'rganishingiz zarur \uD83D\uDE09 \n"+
-                    "Siz topgan to'g'ri javoblar soni : " + sum);
+                    "Siz topgan to'g'ri javoblar soni : " + sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -499,11 +1291,11 @@ public class Mybot extends TelegramLongPollingBot {
                 throw new RuntimeException(e);
             }
         }
-        user.setStep(BotConstant.IQ_LAST);
+        user.setStep(BotConstant.DAS_LAST);
     }
     private void dasturTestUz10(String chatId, TelegramUser user) throws TelegramApiException{
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(" Massiv noto’g’ri ta’rifini ko’rsating. ❓");
+        sendMessage.setText(" Massiv noto’g’ri ta’rifini ko’rsating ❓");
         sendMessage.setChatId(chatId);
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> tdu1 = new ArrayList<>();
@@ -915,7 +1707,8 @@ public class Mybot extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         if (sum>8 && sum<=10){
             sendMessage.setText("Tabriklaymiz sizning IQ darajangiz yuqori \uD83D\uDC4F \n"+
-                    "Siz topgan to'g'ri javoblar soni : " +  sum );
+                    "Siz topgan to'g'ri javoblar soni : " +  sum +
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -924,7 +1717,8 @@ public class Mybot extends TelegramLongPollingBot {
             }
         } else if (sum<=8 && sum>5) {
             sendMessage.setText("Sizning IQ darajangiz o'rta darajada \uD83D\uDC4D \n"+
-                    "Siz topgan to'g'ri javoblar soni : " +  sum);
+                    "Siz topgan to'g'ri javoblar soni : " +  sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -934,7 +1728,8 @@ public class Mybot extends TelegramLongPollingBot {
         }else if (sum<=5 && sum>0){
             sendMessage.setText("Sizning IQ darajangiz past darajada \uD83E\uDD28 \n" +
                     "Kayfiyatingizni ko'taring yoki psixolog maslahatiga boring \uD83D\uDE09 \n"+
-                    "Siz topgan to'g'ri javoblar soni : " + sum);
+                    "Siz topgan to'g'ri javoblar soni : " + sum+
+                    "\n Boshqa fandan test ishlash uchun /startni bosing");
             sendMessage.setChatId(chatId);
             try {
                 execute(sendMessage);
@@ -1382,113 +2177,6 @@ public class Mybot extends TelegramLongPollingBot {
         sendMessage.setReplyMarkup(inlineKeyboardMarkup);
         execute(sendMessage);
         user.setStep(BotConstant.DAS_START);
-    }
-    private void startTestUz(String chatId, TelegramUser user) throws TelegramApiException{
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getFullName() + " IQ Testni Ishlashga tayyormisiz ❓");
-        sendMessage.setChatId(chatId);
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> tdt = new ArrayList<>();
-
-        InlineKeyboardButton inlineKeyboardButtonUzb = new InlineKeyboardButton();
-        inlineKeyboardButtonUzb.setText("Ha tayyorman \uD83E\uDDE0");
-        inlineKeyboardButtonUzb.setCallbackData(BotQuery.START_TEST);
-
-        InlineKeyboardButton inlineKeyboardButtonDas = new InlineKeyboardButton();
-        inlineKeyboardButtonDas.setText("Yo'q  \uD83D\uDE34 ");
-        inlineKeyboardButtonDas.setCallbackData(BotQuery.START_TEST1);
-
-        tdt.add(inlineKeyboardButtonUzb);
-        tdt.add(inlineKeyboardButtonDas);
-
-        List<List<InlineKeyboardButton>> trt = new ArrayList<>();
-        trt.add(tdt);
-
-        inlineKeyboardMarkup.setKeyboard(trt);
-        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-        execute(sendMessage);
-
-        user.setStep(BotConstant.STARTED_TEST);
-    }
-    private void startTestRu(String chatId, TelegramUser user) throws TelegramApiException{
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getFullName() + " Готовы ли вы пройти IQ-тест ❓");
-        sendMessage.setChatId(chatId);
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> td = new ArrayList<>();
-
-        InlineKeyboardButton inlineKeyboardButtonRu = new InlineKeyboardButton();
-        inlineKeyboardButtonRu.setText("Да я готов \uD83D\uDE07");
-        inlineKeyboardButtonRu.setCallbackData(BotQuery.RU_SELECT1);
-
-        InlineKeyboardButton inlineKeyboardButtonN = new InlineKeyboardButton();
-        inlineKeyboardButtonN.setText("Нет \uD83D\uDE07");
-        inlineKeyboardButtonN.setCallbackData(BotQuery.RU_SELECT2);
-
-        td.add(inlineKeyboardButtonRu);
-        td.add(inlineKeyboardButtonN);
-        List<List<InlineKeyboardButton>> tr = new ArrayList<>();
-        tr.add(td);
-        inlineKeyboardMarkup.setKeyboard(tr);
-        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-        execute(sendMessage);
-        user.setSelectedLang(BotConstant.START_RU);
-    }
-    private void startTestEng(String chatId, TelegramUser user) throws TelegramApiException{
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getFullName() + " Are you ready to take the IQ Test ❓");
-        sendMessage.setChatId(chatId);
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> td = new ArrayList<>();
-
-        InlineKeyboardButton inlineKeyboardButtonEng = new InlineKeyboardButton();
-        inlineKeyboardButtonEng.setText("Yes ! I am ready \uD83D\uDE07");
-        inlineKeyboardButtonEng.setCallbackData(BotQuery.ENG_SELECT1);
-
-        InlineKeyboardButton inlineKeyboardButtonNo = new InlineKeyboardButton();
-        inlineKeyboardButtonNo.setText("No \uD83D\uDE07");
-        inlineKeyboardButtonNo.setCallbackData(BotQuery.ENG_SELECT2);
-
-        td.add(inlineKeyboardButtonEng);
-        td.add(inlineKeyboardButtonNo);
-        List<List<InlineKeyboardButton>> tr = new ArrayList<>();
-        tr.add(td);
-        inlineKeyboardMarkup.setKeyboard(tr);
-        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-        execute(sendMessage);
-        user.setSelectedLang(BotConstant.START_ENG);
-    }
-    private void setLang(String chatId,TelegramUser user) throws TelegramApiException{
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setText(user.getFullName() + " Iltimos tilni tanlang :");
-        sendMessage.setChatId(chatId);
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        List<InlineKeyboardButton> td = new ArrayList<>();
-
-        InlineKeyboardButton inlineKeyboardButtonUz = new InlineKeyboardButton();
-        inlineKeyboardButtonUz.setText("Uz \uD83C\uDDFA\uD83C\uDDFF");
-        inlineKeyboardButtonUz.setCallbackData(BotQuery.UZ_SELECT);
-
-        InlineKeyboardButton inlineKeyboardButtonRu = new InlineKeyboardButton();
-        inlineKeyboardButtonRu.setText("Ru \uD83C\uDDF7\uD83C\uDDFA");
-        inlineKeyboardButtonRu.setCallbackData(BotQuery.RU_SELECT);
-
-        InlineKeyboardButton inlineKeyboardButtonEng = new InlineKeyboardButton();
-        inlineKeyboardButtonEng.setText("Eng \uD83C\uDDFA\uD83C\uDDF8");
-        inlineKeyboardButtonEng.setCallbackData(BotQuery.ENG_SELECT);
-
-        td.add(inlineKeyboardButtonUz);
-        td.add(inlineKeyboardButtonRu);
-        td.add(inlineKeyboardButtonEng);
-
-        List<List<InlineKeyboardButton>> tr = new ArrayList<>();
-        tr.add(td);
-
-        inlineKeyboardMarkup.setKeyboard(tr);
-        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
-        execute(sendMessage);
-
-        user.setStep(BotConstant.SELECT_LANG);
     }
     private TelegramUser saveUser(String chatId) {
         for (TelegramUser user : users) {

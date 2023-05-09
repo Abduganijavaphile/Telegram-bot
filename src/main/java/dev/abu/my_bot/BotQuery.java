@@ -1,6 +1,7 @@
 package dev.abu.my_bot;
 
 public interface BotQuery {
+    String FAN_SELECT = "FAN_SELECT";
     String UZ_SELECT = "UZ_SELECT";
     String RU_SELECT = "RU_SELECT";
     String RU_SELECT1 = "RU_SELECT1";
@@ -12,6 +13,26 @@ public interface BotQuery {
     String START_TEST1 = "START_TEST1";
     String IQ_START = "IQ_START";
     String IQ_START1 = "IQ_START1";
+    String ING_START = "ING_START";
+    String ING_START1 = "ING_START1";
+    String ING_START2 = "ING_START2";
+    String ING_START2T = "ING_START2T";
+    String ING_START3 = "ING_START3";
+    String ING_START3T = "ING_START3T";
+    String ING_START4 = "ING_START4";
+    String ING_START4T = "ING_START4T";
+    String ING_START5 = "ING_START5";
+    String ING_START5T = "ING_START5T";
+    String ING_START6 = "ING_START6";
+    String ING_START6T = "ING_START6T";
+    String ING_START7 = "ING_START7";
+    String ING_START7T = "ING_START7T";
+    String ING_START8 = "ING_START8";
+    String ING_START8T = "ING_START8T";
+    String ING_START9 = "ING_START9";
+    String ING_START9T = "ING_START9T";
+    String ING_START10 = "ING_START10";
+    String ING_START10T = "ING_START10T";
     String IQ_START2 = "IQ_START2";
     String IQ_START3 = "IQ_START3";
     String IQ_START4 = "IQ_START4";
@@ -53,7 +74,4 @@ public interface BotQuery {
     String TEST_DASTUR10 = "TEST_DASTUR10";
     String TEST_DASTUR10T = "TEST_DASTUR10T";
     String IQ_LAST = "IQ_LAST";
-
-
-
 }
